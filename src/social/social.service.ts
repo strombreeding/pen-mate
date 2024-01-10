@@ -16,9 +16,10 @@ export class SocialService {
   private kakaoBaseUri: string;
   //   private kakaoParams: IKakaoParams;
   constructor() {
-    this.kakaoParams = new URLSearchParams(
-      JSON.parse(process.env.KAKAO_PARAMS),
-    );
+    // console.log(process.env.KAKAO_PARARMS);
+    // this.kakaoParams = new URLSearchParams(
+    //   JSON.parse(process.env.KAKAO_PARARMS),
+    // );
     this.kakaoBaseUri = 'https://kauth.kakao.com/oauth/token?';
   }
 
