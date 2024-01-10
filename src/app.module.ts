@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { join } from 'path';
 import { connection } from './configs/db';
+import { SocialModule } from './social/social.module';
 //
 console.log(connection, '??');
 @Module({
@@ -18,6 +19,7 @@ console.log(connection, '??');
     ConfigModule.forRoot(),
     UserModule,
     LetterModule,
+    SocialModule,
   ],
   controllers: [AppController],
   providers: [AppService],

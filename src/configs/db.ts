@@ -1,6 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 const DB_URL = process.env.DB_URL;

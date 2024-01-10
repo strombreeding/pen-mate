@@ -24,6 +24,8 @@ export class UserController {
     console.log(query);
     return `
     다음 값을 지니에게 보내주세요.<br/>
-    ${query.code}`;
+    ${query.code} <br/>
+    ${navigator.userAgent}
+    `;
   }
 }
