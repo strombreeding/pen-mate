@@ -18,6 +18,10 @@ export class UserService {
   /* 
     로컬 회원가입일 경우에 AC,AT 미발급
   */
+  async getUser(id: string) {
+    return false;
+  }
+
   async create(create: any) {
     try {
     } catch (err) {}
