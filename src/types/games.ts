@@ -6,7 +6,15 @@ export interface GameProps {
   cost: number;
   matchType: string[];
   player: string[];
+  img: string;
 }
+export type GameTitle =
+  | 'Cosmic Junkyard'
+  | 'Gravity WorkShop'
+  | 'Bang!'
+  | '우주 고철장'
+  | '중력 작업장'
+  | '결투!';
 
 interface GamesObject {
   data: GameProps[];
@@ -29,6 +37,7 @@ export const Games: GamesObject = {
       cost: 50,
       matchType: ['regular'],
       player: ['1p', 'AI'],
+      img: '',
     },
     {
       id: '2024Workshop0228',
@@ -38,6 +47,7 @@ export const Games: GamesObject = {
       cost: 50,
       matchType: ['regular'],
       player: ['1p', 'Match'],
+      img: '',
     },
     {
       id: '2024bang0228',
@@ -47,6 +57,7 @@ export const Games: GamesObject = {
       cost: 500,
       matchType: ['regular'],
       player: ['2p', 'Match', 'AI'],
+      img: '',
     },
   ],
 };
