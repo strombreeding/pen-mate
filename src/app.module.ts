@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { join } from 'path';
 import { connection } from './configs/db';
 import { SocialModule } from './social/social.module';
+import { GameModule } from './game/game.module';
 //
 console.log(connection, '??');
 @Module({
@@ -16,9 +17,10 @@ console.log(connection, '??');
     // MongooseModule.forRoot('mongodb://13.125.251.140:27017'),
     // TypeOrmModule.forRoot(connection),
     ConfigModule.forRoot(),
-    UserModule,
-    LetterModule,
-    SocialModule,
+    // UserModule,
+    // LetterModule,
+    // SocialModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],
