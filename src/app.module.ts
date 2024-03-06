@@ -3,13 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { LetterModule } from './letter/letter.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { join } from 'path';
 import { connection } from './configs/db';
 import { SocialModule } from './social/social.module';
 import { GameModule } from './game/game.module';
+import { RankingsModule } from './rankings/rankings.module';
+import { StoreModule } from './store/store.module';
 //
 console.log(connection, '??');
 @Module({
@@ -21,6 +22,8 @@ console.log(connection, '??');
     // LetterModule,
     // SocialModule,
     GameModule,
+    RankingsModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

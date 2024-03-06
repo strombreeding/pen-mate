@@ -10,7 +10,7 @@ export class GameController {
   @Get('/')
   getAllGame() {
     const result = Games.findAll();
-    return { data: result };
+    return { result: result };
   }
 
   @Get('/:id')
@@ -20,8 +20,11 @@ export class GameController {
     return result;
   }
 
-  @Post('/')
+  @Post('/new')
   initGame(@Body() body: Record<string, any>) {
+    console.log(body);
+    const result = this.gameService.createNewGame(body);
+    return { result };
     // 서비스로직으로 게임 만들고 해당 게임 ID 리턴해주기
   }
 }
