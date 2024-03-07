@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
+  private userList = [];
   constructor(private readonly userService: UserService) {}
 
   @Get('/')
@@ -10,10 +11,23 @@ export class UserController {
     // return await this.userService.findAll();
   }
 
+  @Get(':id')
+  async nickCheck(@Param() param: { id: string }) {
+    console.log('하이', param);
+    const a = this.userList.find((val) => val.nickname === param.id);
+    console.log(a);
+    if (a == undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Post('/create')
   async create(@Body() data: any) {
-    console.log(data, '하이;');
-    return 'gdgd';
+    this.userList.push(data);
+
+    return true;
     // return await this.userService.create(data);
   }
 

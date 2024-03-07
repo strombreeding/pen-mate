@@ -63,16 +63,18 @@ export class SocialService {
       headers: { Authorization: token },
     });
     let id: string;
+    let email: string;
     if (profile.data.kakao_account.has_email) {
-      id = profile.data.kakao_account.email;
-    } else {
+      email = profile.data.kakao_account.email;
+    }
+    if (profile.data) {
       id = profile.data.id;
     }
-    console.log(id); // 이걸로 유저 서비스에서 가입했는지 여부 파악후 가입 진행
+    console.log(id, email); // 이걸로 유저 서비스에서 가입했는지 여부 파악후 가입 진행
 
     const validatedUser = await this.userService.getUser(id);
     if (!validatedUser) {
-      return 'sign-up';
+      return { result: '/join', id, email };
     } else {
       // const {access_token, refresh_token} = await this.userService.login(id)
     }

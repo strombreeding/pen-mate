@@ -20,7 +20,7 @@ console.log(connection, '??');
     ConfigModule.forRoot(),
     // UserModule,
     // LetterModule,
-    // SocialModule,
+    SocialModule,
     GameModule,
     RankingsModule,
     StoreModule,
