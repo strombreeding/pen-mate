@@ -2,6 +2,9 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SocialService } from './social.service';
 import { SocialPlatform } from 'src/types/types';
 import { UserService } from 'src/user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from 'src/user/user.schema';
+import { Model } from 'mongoose';
 
 @Controller('social')
 export class SocialController {
