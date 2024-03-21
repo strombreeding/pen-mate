@@ -7,6 +7,7 @@ export interface GameProps {
   matchType: string[];
   player: string[];
   img: string;
+  rewards: string[];
 }
 export type GameTitle =
   | 'Cosmic Junkyard'
@@ -33,12 +34,13 @@ export const Games: GamesObject = {
       id: 'junkyard',
       title: '고철장',
       description:
-        '같은 고철끼리 짝을 맞추어야합니다.\n일정 확률로 아이템을 획득할 수 있습니다.',
+        '제한 시간내에 최대한 많은 짝을 맞추어 점수를 획득하세요!\n\n확률로 에너지와 반물질을 습득할 수 있습니다.',
       minReward: 100,
       cost: 50,
       matchType: ['정규전'],
       player: ['1p', 'AI'],
       img: '',
+      rewards: ['energy', 'atata_un', 'antimatter'],
     },
     {
       id: 'Workshop',
@@ -50,16 +52,19 @@ export const Games: GamesObject = {
       matchType: ['정규전'],
       player: ['1p'],
       img: '',
+      rewards: [],
     },
     {
       id: 'bang',
       title: '결투!',
-      description: '뱅',
+      description:
+        '빠르게 반응하고 상대를 예측하세요\n아타타 포인트를 획득하여 랭킹을 올려보세요.',
       minReward: 800,
       cost: 500,
       matchType: ['정규전', '현상금'],
       player: ['2p', '대전', 'AI'],
       img: '',
+      rewards: ['atata_point', 'atata_un'],
     },
   ],
 };
