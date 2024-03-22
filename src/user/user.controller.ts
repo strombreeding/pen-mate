@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { CostObjProps, RecordProps } from 'src/types/record';
 
 @Controller('user')
 export class UserController {
@@ -41,18 +42,18 @@ export class UserController {
   async updateRefreshToken(@Body() body: { rt: string }) {
     console.log('리프레쉬');
     try {
-      const { at, rt } = await this.userService.refreshToken(body.rt);
-      return { at, rt };
+      const result = await this.userService.refreshToken(body.rt);
+      return result;
     } catch (err) {
       throw new HttpException(err.message, 401);
     }
   }
 
   @Post('/verify')
-  verify(@Body() body: { at: string }) {
+  async verify(@Body() body: { at: string }) {
     console.log('베리파이');
     try {
-      const json = this.userService.verifyToken(body.at);
+      const json = await this.userService.verifyToken(body.at);
       console.log('베리파이 던', json);
       return json;
     } catch (err) {
@@ -79,15 +80,20 @@ export class UserController {
     // return await this.userService.create(data);
   }
 
-  @Get('/kakao/redirect')
-  async kakaoRedirect(@Body() body: any, @Query() query: any) {
-    console.log(body);
-    console.log('#########################################');
-    console.log(query);
-    return `
-    다음 값을 지니에게 보내주세요.<br/>
-    ${query.code} <br/>
-    ${navigator.userAgent}
-    `;
+  @Post('/checkCost')
+  async checkCost(@Body() body: { costObj: CostObjProps[]; at: string }) {
+    const result = await this.userService.checkCost(body.costObj, body.at);
+    return result;
   }
+  // @Get('/kakao/redirect')
+  // async kakaoRedirect(@Body() body: any, @Query() query: any) {
+  //   console.log(body);
+  //   console.log('#########################################');
+  //   console.log(query);
+  //   return `
+  //   다음 값을 지니에게 보내주세요.<br/>
+  //   ${query.code} <br/>
+  //   ${navigator.userAgent}
+  //   `;
+  // }
 }

@@ -18,7 +18,7 @@ export class SocialService {
   private kakaoBaseUri: string;
   private kakaoOauthUri: string;
   //   private kakaoParams: IKakaoParams;
-  constructor(private userService: UserService) {
+  constructor(private readonly userService: UserService) {
     this.kakaoParams = new URLSearchParams(
       JSON.parse(process.env.KAKAO_PARARMS),
     );

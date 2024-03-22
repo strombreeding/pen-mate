@@ -9,10 +9,10 @@ export class Item {
   owner_id: string;
 
   @Prop()
-  cost: number; // 방어력+ 1 등등
+  cost: number; // AS 가격 그러나 AS의 코스트는 현금 가격이다.
 
   @Prop()
-  usage: string; // 사용처
+  usage: string; // 사용처 고철장/뱅 /잡템/
 
   @Prop()
   item_img: string;
@@ -28,9 +28,6 @@ export class Item {
 
   @Prop()
   skil: string[];
-
-  @Prop()
-  deadline: Date | null;
 
   @Prop()
   type: 'atk' | 'util';

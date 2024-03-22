@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { GameService } from './game.service';
 import { Games } from 'src/types/games';
+import { RecordProps } from 'src/types/record';
 
 @Controller('game')
 export class GameController {
@@ -21,10 +29,20 @@ export class GameController {
   }
 
   @Post('/new')
-  initGame(@Body() body: Record<string, any>) {
-    console.log(body);
-    const result = this.gameService.createNewGame(body);
-    return { result };
-    // 서비스로직으로 게임 만들고 해당 게임 ID 리턴해주기
+  async initGame(@Body() body: { recordProps: RecordProps; at: string }) {
+    const result = await this.gameService.createNewGame(
+      body.recordProps,
+      body.at,
+    );
+    return result;
+  }
+
+  @Post('/checkCost')
+  async checkCost(@Body() body: { recordProps: RecordProps; at: string }) {
+    const result = await this.gameService.createNewGame(
+      body.recordProps,
+      body.at,
+    );
+    return result;
   }
 }

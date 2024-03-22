@@ -1,18 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { GameCost } from 'src/types/games';
 
 export type GameDocument = HydratedDocument<Game>;
 
 @Schema()
 export class Game {
+  @Prop()
+  game_url: string;
+
   @Prop({ required: true, unique: true })
-  game_title: string;
+  title: string;
 
   @Prop()
   description: string;
 
   @Prop()
-  min_cost: number;
+  cost_obj: GameCost[];
+
+  @Prop()
+  rewards: string[];
 
   @Prop()
   match_type: number;
