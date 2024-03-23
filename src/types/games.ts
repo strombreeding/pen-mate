@@ -40,7 +40,7 @@ export const Games: GamesObject = {
       matchType: ['정규전'],
       player: ['1p', 'AI'],
       img: 'https://cdn.jsdelivr.net/gh/strombreeding/atata_assets@main/gameImg/junkyard.png',
-      rewards: ['energy', 'atata_un', 'antimatter'],
+      rewards: ['energy', 'atata_stone', 'antimatter'],
       costObj: [
         {
           type: 'energy',
@@ -72,14 +72,14 @@ export const Games: GamesObject = {
       matchType: ['정규전', '현상금'],
       player: ['2p', '대전', 'AI'],
       img: 'https://cdn.jsdelivr.net/gh/strombreeding/atata_assets@main/gameImg/bang_img.png',
-      rewards: ['atata_point', 'atata_un'],
+      rewards: ['atata_point', 'atata_stone'],
       costObj: [
         {
           type: 'energy',
           cost: 1,
         },
         {
-          type: 'atata_un',
+          type: 'atata_stone',
           cost: 300,
         },
       ],

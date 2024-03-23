@@ -162,7 +162,7 @@ export class UserService {
           throw new HttpException('not enough energy', 400);
         }
 
-        if (obj.type === 'atata_un' && user.atata_stone < obj.cost) {
+        if (obj.type === 'atata_stone' && user.atata_stone < obj.cost) {
           throw new HttpException('not enough atataStone', 400);
         }
       });

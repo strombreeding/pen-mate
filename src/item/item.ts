@@ -4,7 +4,7 @@ export const items = [
   {
     item_name: '아타타스톤',
     cost: 0,
-    item_img: cdnDefaultURL + 'pngs/atata_un.png',
+    item_img: cdnDefaultURL + 'pngs/atata_stone.png',
     item_description: '아타타에서 사용하는 공용 재화',
     skill: [],
     type: 'util',
@@ -61,5 +61,22 @@ export const items = [
     type: 'util',
     price: 30,
     usage: '잡화',
+  },
+];
+
+// 상점에 들어갔을때 데이터는 이렇게 불러와져야 한다
+
+[
+  {
+    //아타타 포인트
+  },
+];
+
+// 유저 인벤토리를 불러올땐 다음과 같을 것이다
+
+[
+  {
+    // 아이템 스키마 (id로 저장시켜놓기)
+    // 갯수
   },
 ];

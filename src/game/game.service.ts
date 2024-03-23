@@ -6,6 +6,7 @@ import { Game } from './game.schema';
 import { UserService } from 'src/user/user.service';
 import { GameRecord } from './game_record.schema';
 import { CostObjProps, RecordProps } from 'src/types/record';
+import { UpdateRecordProps } from './game.controller';
 @Injectable()
 export class GameService {
   private gameDatas = [];
@@ -33,7 +34,7 @@ export class GameService {
           throw new HttpException('not enough energy', 400);
         }
 
-        if (obj.type === 'atata_un' && user.atata_stone < obj.cost) {
+        if (obj.type === 'atata_stone' && user.atata_stone < obj.cost) {
           throw new HttpException('not enough atataStone', 400);
         }
 
@@ -44,7 +45,7 @@ export class GameService {
           };
         }
 
-        if (obj.type === 'atata_un') {
+        if (obj.type === 'atata_stone') {
           costForUpdate.update = {
             ...costForUpdate.update,
             atata_stone: user.atata_stone - obj.cost,
@@ -82,7 +83,29 @@ export class GameService {
     }
   }
 
-  recordGameData() {
-    return; // 생성된 Game 데이터
+  async updateGameRecord(data: UpdateRecordProps) {
+    // data.rewards.push({ itemName: 'energy', cnt: 100 });
+    const { _id, ...rest } = data;
+    const { rewards } = data;
+
+    const record = await this.gameRecordModel.findByIdAndUpdate(data._id, {
+      $set: {
+        ...rest,
+      },
+    });
+    const user = await this.userService.getById(data.player_id);
+    // 리워드를 유저 정보에 넣어줌.
+    rewards.map((item, i) => {
+      console.log(user[item.itemName], '찾기');
+      user[item.itemName] = user[item.itemName] + item.cnt;
+    });
+    user.save();
+    const updateSource = {
+      atataPoint: user.atata_point,
+      atataStone: user.atata_stone,
+      energy: user.energy,
+    };
+    console.log(user);
+    return updateSource;
   }
 }

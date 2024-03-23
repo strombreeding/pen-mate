@@ -5,6 +5,7 @@ import {
   HttpException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { Games } from 'src/types/games';
@@ -45,4 +46,24 @@ export class GameController {
     );
     return result;
   }
+
+  @Put('/record')
+  async recordGame(@Body() body: UpdateRecordProps) {
+    console.log(body);
+    const result = await this.gameService.updateGameRecord(body);
+    return result;
+  }
 }
+
+export type UpdateRecordProps = {
+  player_id: string;
+  game_title: string;
+  rewards: { itemName: string; cnt: number }[];
+  play_time: number;
+  cost_obj: { type: string; cost: number }[];
+  game_result: string;
+  game_special_option: '';
+  play_at: Date;
+  _id: string;
+  __v: 0;
+};
