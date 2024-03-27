@@ -6,6 +6,7 @@ import { Game, GameSchema } from './game.schema';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
 import { GameRecord, GameRecordSchema } from './game_record.schema';
+import { InventoryModule } from 'src/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { GameRecord, GameRecordSchema } from './game_record.schema';
       },
     ]),
     UserModule,
+    InventoryModule,
   ],
   controllers: [GameController],
   providers: [GameService],

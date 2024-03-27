@@ -3,10 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { Game } from './game.schema';
-import { UserService } from 'src/user/user.service';
+import { UserService, verifyToken } from 'src/user/user.service';
 import { GameRecord } from './game_record.schema';
 import { CostObjProps, RecordProps } from 'src/types/record';
 import { UpdateRecordProps } from './game.controller';
+import { InventoryService } from 'src/inventory/inventory.service';
 @Injectable()
 export class GameService {
   private gameDatas = [];
@@ -16,46 +17,32 @@ export class GameService {
     @InjectModel(GameRecord.name)
     private readonly gameRecordModel: Model<GameRecord>,
     private readonly userService: UserService,
+    private readonly inventoryService: InventoryService,
   ) {}
 
   async createNewGame(recordData: RecordProps, token: string) {
     // 해당 유저 id와 게임타이틀, 들어간 비용과 얻을 리워드 가데이터 만들어서 리턴
     // 리턴값으로 프론트 쿠키에 저장후 갱신
     try {
-      const tokenVerify = await this.userService.verifyToken(token);
-      const costForUpdate = { update: {} };
-      // 유저 정보 업데이트
-      const user = await this.userService.getById(tokenVerify.id);
-      if (!user) throw new HttpException('not found', 404);
-
-      // 코스트 검증 및 업데이트 객체에 추가
-      recordData.costObj.map((obj: CostObjProps, i) => {
-        if (obj.type === 'energy' && user.energy < obj.cost) {
-          throw new HttpException('not enough energy', 400);
-        }
-
-        if (obj.type === 'atata_stone' && user.atata_stone < obj.cost) {
-          throw new HttpException('not enough atataStone', 400);
-        }
-
-        if (obj.type === 'energy') {
-          costForUpdate.update = {
-            ...costForUpdate.update,
-            energy: user.energy - obj.cost,
-          };
-        }
-
-        if (obj.type === 'atata_stone') {
-          costForUpdate.update = {
-            ...costForUpdate.update,
-            atata_stone: user.atata_stone - obj.cost,
-          };
-        }
+      const tokenVerify = await verifyToken(token);
+      const costForUpdate = [];
+      const inventory = await this.inventoryService.find({
+        owner_id: tokenVerify.id,
       });
-
-      console.log(costForUpdate.update);
-      await user.updateOne({ _id: user.id, $set: costForUpdate.update });
-
+      inventory.map((inventoryItem) => {
+        recordData.costObj.map((costItem) => {
+          if (costItem.type === inventoryItem.item.item_name) {
+            if (inventoryItem.cnt < costItem.cost)
+              throw new HttpException('not enough cost', 400);
+            costForUpdate.push({
+              itemName: costItem.type,
+              cnt: inventoryItem.cnt - costItem.cost,
+            });
+          }
+        });
+      });
+      await this.inventoryService.addNewItem(tokenVerify.id, costForUpdate);
+      console.log(costForUpdate);
       const createNewGameRecord = await this.gameRecordModel.create({
         game_title: recordData.gameTitle,
         player_id: tokenVerify.id,
@@ -64,9 +51,7 @@ export class GameService {
 
       return {
         record: createNewGameRecord,
-        updateSource: {
-          ...costForUpdate.update,
-        },
+        updateSource: [...costForUpdate],
       };
     } catch (err) {
       if (err.message.includes('jwt expired')) {
@@ -85,27 +70,49 @@ export class GameService {
 
   async updateGameRecord(data: UpdateRecordProps) {
     // data.rewards.push({ itemName: 'energy', cnt: 100 });
-    const { _id, ...rest } = data;
-    const { rewards } = data;
+    const { _id, rewards, ...rest } = data;
 
     const record = await this.gameRecordModel.findByIdAndUpdate(data._id, {
       $set: {
         ...rest,
       },
     });
-    const user = await this.userService.getById(data.player_id);
-    // 리워드를 유저 정보에 넣어줌.
-    rewards.map((item, i) => {
-      console.log(user[item.itemName], '찾기');
-      user[item.itemName] = user[item.itemName] + item.cnt;
+    // const user = await this.userService.getById(data.player_id);
+    const inventory = await this.inventoryService.find({
+      owner_id: data.player_id,
     });
-    user.save();
-    const updateSource = {
-      atataPoint: user.atata_point,
-      atataStone: user.atata_stone,
-      energy: user.energy,
-    };
-    console.log(user);
+
+    const updateSource: { itemName: string; cnt: number }[] = [];
+
+    inventory.map((inventoryItem) => {
+      rewards.map((updateItem) => {
+        if (updateItem.itemName === inventoryItem.item.item_name) {
+          console.log(
+            `
+              ${updateItem.itemName} 
+              기존 : ${inventoryItem.cnt}  
+              추가 : ${updateItem.cnt}  
+              결과 : ${updateItem.cnt + inventoryItem.cnt}  
+            `,
+          );
+          updateSource.push({
+            cnt: inventoryItem.cnt + updateItem.cnt,
+            itemName: updateItem.itemName,
+          });
+        } else {
+          updateSource.push({
+            cnt: updateItem.cnt,
+            itemName: updateItem.itemName,
+          });
+        }
+      });
+    });
+    const update = await this.inventoryService.addNewItem(
+      data.player_id,
+      updateSource,
+    );
+
+    console.log(updateSource);
     return updateSource;
   }
 }

@@ -3,12 +3,10 @@ import {
   Controller,
   Get,
   HttpException,
-  HttpStatus,
   Param,
   Post,
-  Query,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService, verifyToken } from './user.service';
 import { CostObjProps, RecordProps } from 'src/types/record';
 
 @Controller('user')
@@ -53,7 +51,7 @@ export class UserController {
   async verify(@Body() body: { at: string }) {
     console.log('베리파이');
     try {
-      const json = await this.userService.verifyToken(body.at);
+      const json = await verifyToken(body.at);
       console.log('베리파이 던', json);
       return json;
     } catch (err) {
@@ -75,7 +73,7 @@ export class UserController {
       return result;
     } catch (err) {
       console.log(err.message);
-      throw new Error(err.message);
+      throw new HttpException(err.message, 500);
     }
     // return await this.userService.create(data);
   }

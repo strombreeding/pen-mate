@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Inventory } from 'src/inventory/inventory.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -13,15 +14,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   nickname: string;
-
-  @Prop({ default: 5 })
-  energy: number;
-
-  @Prop({ default: 0 })
-  atata_stone: number;
-
-  @Prop({ default: 0 })
-  atata_point: number;
 
   @Prop({ default: 0 })
   play_count: number;

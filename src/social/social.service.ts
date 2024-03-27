@@ -73,6 +73,7 @@ export class SocialService {
     console.log(id, email); // 이걸로 유저 서비스에서 가입했는지 여부 파악후 가입 진행
 
     const validatedUser = await this.userService.isOurUser(id);
+    console.log(validatedUser);
     if (!validatedUser) {
       return { result: '/join', id, email };
     } else {
