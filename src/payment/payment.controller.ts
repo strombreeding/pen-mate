@@ -18,4 +18,5 @@ type ItemProps = {
   price: number;
   _id: string;
   cnt: number;
+  item_name: string;
 };

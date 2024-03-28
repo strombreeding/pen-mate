@@ -10,6 +10,7 @@ import {
 import { GameService } from './game.service';
 import { Games } from 'src/types/games';
 import { RecordProps } from 'src/types/record';
+import mongoose from 'mongoose';
 
 @Controller('game')
 export class GameController {
@@ -49,7 +50,7 @@ export class GameController {
 
   @Put('/record')
   async recordGame(@Body() body: UpdateRecordProps) {
-    console.log(body);
+    console.log(body, '#######바디');
     const result = await this.gameService.updateGameRecord(body);
     return result;
   }
@@ -58,7 +59,7 @@ export class GameController {
 export type UpdateRecordProps = {
   player_id: string;
   game_title: string;
-  rewards: { itemName: string; cnt: number }[];
+  rewards: { item_name: string; cnt: number }[];
   play_time: number;
   cost_obj: { type: string; cost: number }[];
   game_result: string;

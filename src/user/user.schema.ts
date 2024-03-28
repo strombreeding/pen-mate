@@ -6,6 +6,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
+  @Prop({ type: Types.ObjectId, auto: true })
+  _id: Types.ObjectId;
+
   @Prop()
   social_id: string;
 
@@ -23,6 +26,9 @@ export class User {
 
   @Prop({ default: new Date() })
   last_connection: Date;
+
+  @Prop({ default: false })
+  bounti: boolean;
 
   @Prop({ default: new Date() })
   create_at: Date;

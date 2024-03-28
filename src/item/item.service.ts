@@ -18,6 +18,11 @@ export class ItemService {
   async findAll() {
     const items = await this.itemModel.aggregate([
       {
+        $match: {
+          item_name: { $ne: 'atata_stone' },
+        },
+      },
+      {
         $group: {
           _id: '$usage',
           items: { $push: '$$ROOT' },
@@ -39,9 +44,9 @@ export class ItemService {
     return result;
   }
 
-  async findByName(itemName: string) {
+  async findByName(item_name: string) {
     try {
-      const result = await this.itemModel.findOne({ item_name: itemName });
+      const result = await this.itemModel.findOne({ item_name: item_name });
       return result;
     } catch (err) {
       console.log(err.message);

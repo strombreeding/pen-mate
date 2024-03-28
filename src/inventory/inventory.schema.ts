@@ -10,8 +10,8 @@ export class Inventory {
   @Prop({ type: Types.ObjectId, auto: true })
   _id: Types.ObjectId;
 
-  @Prop()
-  owner_id: string;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  owner_id: User;
 
   @Prop({ type: Types.ObjectId, ref: Item.name, required: true })
   item: Item;

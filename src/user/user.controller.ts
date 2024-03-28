@@ -20,6 +20,13 @@ export class UserController {
     return allUser;
     // return await this.userService.findAll();
   }
+  @Get('/one/:id')
+  async getOne(@Param() param: { id: string }) {
+    console.log(param);
+    const result = await this.userService.getById(param.id);
+    console.log(result);
+    return result;
+  }
 
   @Get(':nickname')
   async nickCheck(@Param() param: { nickname: string }) {
@@ -81,6 +88,15 @@ export class UserController {
   @Post('/checkCost')
   async checkCost(@Body() body: { costObj: CostObjProps[]; at: string }) {
     const result = await this.userService.checkCost(body.costObj, body.at);
+    return result;
+  }
+
+  @Post('/admin')
+  async adminLogin() {
+    const result = await this.userService.login({
+      social_id: '1234',
+      email: 'admin',
+    });
     return result;
   }
   // @Get('/kakao/redirect')

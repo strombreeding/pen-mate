@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { Game } from './game.schema';
 import { UserService, verifyToken } from 'src/user/user.service';
@@ -26,8 +26,10 @@ export class GameService {
     try {
       const tokenVerify = await verifyToken(token);
       const costForUpdate = [];
+      const costResult = {};
+      const owner_id = new mongoose.Types.ObjectId(tokenVerify.id);
       const inventory = await this.inventoryService.find({
-        owner_id: tokenVerify.id,
+        owner_id,
       });
       inventory.map((inventoryItem) => {
         recordData.costObj.map((costItem) => {
@@ -35,14 +37,14 @@ export class GameService {
             if (inventoryItem.cnt < costItem.cost)
               throw new HttpException('not enough cost', 400);
             costForUpdate.push({
-              itemName: costItem.type,
+              item_name: costItem.type,
               cnt: inventoryItem.cnt - costItem.cost,
             });
+            costResult[costItem.type] = inventoryItem.cnt - costItem.cost;
           }
         });
       });
-      await this.inventoryService.addNewItem(tokenVerify.id, costForUpdate);
-      console.log(costForUpdate);
+      await this.inventoryService.addNewItem(owner_id, costForUpdate);
       const createNewGameRecord = await this.gameRecordModel.create({
         game_title: recordData.gameTitle,
         player_id: tokenVerify.id,
@@ -51,7 +53,7 @@ export class GameService {
 
       return {
         record: createNewGameRecord,
-        updateSource: [...costForUpdate],
+        updateSource: costResult,
       };
     } catch (err) {
       if (err.message.includes('jwt expired')) {
@@ -69,50 +71,53 @@ export class GameService {
   }
 
   async updateGameRecord(data: UpdateRecordProps) {
-    // data.rewards.push({ itemName: 'energy', cnt: 100 });
-    const { _id, rewards, ...rest } = data;
+    // data.rewards.push({ item_name: 'energy', cnt: 100 });
+    try {
+      const { rewards } = data;
 
-    const record = await this.gameRecordModel.findByIdAndUpdate(data._id, {
-      $set: {
-        ...rest,
-      },
-    });
-    // const user = await this.userService.getById(data.player_id);
-    const inventory = await this.inventoryService.find({
-      owner_id: data.player_id,
-    });
-
-    const updateSource: { itemName: string; cnt: number }[] = [];
-
-    inventory.map((inventoryItem) => {
-      rewards.map((updateItem) => {
-        if (updateItem.itemName === inventoryItem.item.item_name) {
-          console.log(
-            `
-              ${updateItem.itemName} 
-              기존 : ${inventoryItem.cnt}  
-              추가 : ${updateItem.cnt}  
-              결과 : ${updateItem.cnt + inventoryItem.cnt}  
-            `,
-          );
-          updateSource.push({
-            cnt: inventoryItem.cnt + updateItem.cnt,
-            itemName: updateItem.itemName,
-          });
-        } else {
-          updateSource.push({
-            cnt: updateItem.cnt,
-            itemName: updateItem.itemName,
-          });
-        }
+      const record = await this.gameRecordModel.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(data._id),
+        {
+          $set: {
+            ...data,
+          },
+        },
+      );
+      // const user = await this.userService.getById(data.player_id);
+      const inventory = await this.inventoryService.find({
+        owner_id: new mongoose.Types.ObjectId(data.player_id),
       });
-    });
-    const update = await this.inventoryService.addNewItem(
-      data.player_id,
-      updateSource,
-    );
+      const updateSource: { item_name: string; cnt: number }[] = [];
+      const result = {};
+      inventory.map((inventoryItem) => {
+        rewards.map((updateItem) => {
+          if (updateItem.item_name === inventoryItem.item.item_name) {
+            console.log(
+              `
+                ${updateItem.item_name} 
+                기존 : ${inventoryItem.cnt}  
+                추가 : ${updateItem.cnt}  
+                결과 : ${updateItem.cnt + inventoryItem.cnt}  
+              `,
+            );
+            updateSource.push({
+              cnt: inventoryItem.cnt + updateItem.cnt,
+              item_name: updateItem.item_name,
+            });
+            result[updateItem.item_name] = inventoryItem.cnt + updateItem.cnt;
+          }
+        });
+      });
+      const update = await this.inventoryService.addNewItem(
+        new mongoose.Types.ObjectId(data.player_id),
+        updateSource,
+      );
 
-    console.log(updateSource);
-    return updateSource;
+      console.log(result, '리절트');
+      return result;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(err.message, err.status);
+    }
   }
 }
