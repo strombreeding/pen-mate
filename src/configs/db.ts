@@ -3,6 +3,7 @@ import { join } from 'path';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+export const SERVER_URL = process.env.SERVER_URL;
 
 const DB_URL = process.env.DB_URL;
 const DB_USER = process.env.DB_USER;

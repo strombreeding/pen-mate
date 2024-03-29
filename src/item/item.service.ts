@@ -23,6 +23,11 @@ export class ItemService {
         },
       },
       {
+        $sort: {
+          item_name: 1,
+        },
+      },
+      {
         $group: {
           _id: '$usage',
           items: { $push: '$$ROOT' },

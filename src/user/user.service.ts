@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Type } from '@nestjs/common';
 // import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { FilterQuery, Model } from 'mongoose';
+import mongoose, { FilterQuery, Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 // import { InjectRepository } from '@nestjs/typeorm';
 import { InjectModel } from '@nestjs/mongoose';
@@ -227,6 +227,11 @@ export class UserService {
       throw new Error(err);
     }
   }
+
+  async findOneAndUpdate(_id: Types.ObjectId, update: any) {
+    const zz = await this.userModel.findOneAndUpdate({ _id }, { $set: update });
+    return zz;
+  }
 }
 // JWT 생성 함수
 export function generateToken(payload: Record<string, any>, expire?: string) {
@@ -234,6 +239,7 @@ export function generateToken(payload: Record<string, any>, expire?: string) {
   const newPayload = { ...payload };
   const token = jwt.sign(newPayload, process.env.JWT_SECRET_KEY, {
     expiresIn: expire == null ? parseTime('1s') : parseTime(expire),
+    // expiresIn: expire == null ? parseTime('1s') : parseTime(expire),
   });
   return token;
 }

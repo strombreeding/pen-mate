@@ -5,6 +5,8 @@ import { Item } from 'src/item/item.schema';
 import { Inventory } from './inventory.schema';
 import { ItemService } from 'src/item/item.service';
 import { UserService } from 'src/user/user.service';
+import axios from 'axios';
+import { SERVER_URL } from 'src/configs/db';
 
 @Injectable()
 export class InventoryService {
@@ -67,7 +69,6 @@ export class InventoryService {
 
       // 아이템들 리스트를 찾았으니 이 리스트를 itemList를 반복하며 넣어주면 됨
       const addProcess = getItemList.map((item, index) => {
-        console.log(itemList[index].item_name, itemList[index].cnt);
         return this.inventoryModel.findOneAndUpdate(
           {
             owner_id,
@@ -85,7 +86,18 @@ export class InventoryService {
       });
 
       const results: Inventory[] = await Promise.all(addProcess);
-      console.log(results, '인벤토리 아이템 추가내역');
+      // console.log(results, '인벤토리 아이템 추가내역');
+      const isBounti = itemList.find((item) => item.item_name === 'skul');
+
+      if (isBounti && isBounti.cnt >= 3) {
+        axios.put(SERVER_URL + 'user/bounti/' + owner_id.toString(), {
+          bounti: true,
+        });
+      } else if (isBounti && isBounti.cnt < 3) {
+        axios.put(SERVER_URL + 'user/bounti/' + owner_id.toString(), {
+          bounti: false,
+        });
+      }
       return results;
     } catch (err) {
       console.log(err, 'inventory_addNewItem');

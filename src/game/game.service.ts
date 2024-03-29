@@ -74,9 +74,10 @@ export class GameService {
     // data.rewards.push({ item_name: 'energy', cnt: 100 });
     try {
       const { rewards } = data;
+      const userInfo = await this.userService.getById(data.player_id);
 
       const record = await this.gameRecordModel.findByIdAndUpdate(
-        new mongoose.Types.ObjectId(data._id),
+        new mongoose.Types.ObjectId(data.player_id),
         {
           $set: {
             ...data,
@@ -87,33 +88,64 @@ export class GameService {
       const inventory = await this.inventoryService.find({
         owner_id: new mongoose.Types.ObjectId(data.player_id),
       });
+
       const updateSource: { item_name: string; cnt: number }[] = [];
       const result = {};
+
+      if (userInfo.bounti && data.game_result === '패배..') {
+        updateSource.push({ item_name: 'skul', cnt: 0 });
+        userInfo.bounti = false;
+        userInfo.save();
+      }
+
       inventory.map((inventoryItem) => {
+        if (updateSource.length === rewards.length) return; // 다채우면 아래 반복은 할필요없음
+
         rewards.map((updateItem) => {
-          if (updateItem.item_name === inventoryItem.item.item_name) {
-            console.log(
-              `
-                ${updateItem.item_name} 
-                기존 : ${inventoryItem.cnt}  
-                추가 : ${updateItem.cnt}  
-                결과 : ${updateItem.cnt + inventoryItem.cnt}  
-              `,
-            );
+          const wasPushList = updateSource.find(
+            (item) => item.item_name === updateItem.item_name,
+          );
+          const alreadyHasItem = inventory.find(
+            (list) => list.item.item_name === updateItem.item_name,
+          );
+          const skulInfo = inventory.find(
+            (list) => list.item.item_name === 'skul',
+          );
+          const skulCnt = skulInfo == null ? 0 : skulInfo.cnt;
+
+          if (wasPushList) return;
+          if (alreadyHasItem) {
+            const bountiBonus = 1200;
+            const isSkul = updateItem.item_name === 'skul';
+            const defaultReward = alreadyHasItem.cnt + updateItem.cnt;
+            const updateCnt = isSkul
+              ? defaultReward
+              : bountiBonus + defaultReward;
+            console.log(isSkul, defaultReward, updateCnt);
             updateSource.push({
-              cnt: inventoryItem.cnt + updateItem.cnt,
+              cnt: updateCnt,
               item_name: updateItem.item_name,
             });
-            result[updateItem.item_name] = inventoryItem.cnt + updateItem.cnt;
+            result[updateItem.item_name] = updateCnt;
+            return;
+          }
+          if (!alreadyHasItem) {
+            console.log('없던 아이템임 리워드 수 만큼 추가할것');
+            updateSource.push({
+              cnt: updateItem.cnt,
+              item_name: updateItem.item_name,
+            });
           }
         });
       });
+
+      console.log(updateSource, '업뎃소스');
       const update = await this.inventoryService.addNewItem(
         new mongoose.Types.ObjectId(data.player_id),
         updateSource,
       );
 
-      console.log(result, '리절트');
+      // console.log(result, '리절트');
       return result;
     } catch (err) {
       console.log(err);

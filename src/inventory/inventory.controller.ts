@@ -24,11 +24,11 @@ export class InventoryController {
       const condition: FilterQuery<Inventory> = {
         owner_id: new mongoose.Types.ObjectId(token.id),
         cnt: { $ne: 0 },
-        name: { $nin: ['atata_stone', 'atata_point', 'energy'] },
+        'item.item_name': { $nin: ['atata_stone', 'energy'] },
         ...(type && { 'item.usage': type }),
       };
       const result = await this.inventoryService.find(condition);
-      console.log(result, 'ㅎㅇ');
+      // console.log(result, 'ㅎㅇ');
       return result;
     } catch (err) {
       console.log(err.status);

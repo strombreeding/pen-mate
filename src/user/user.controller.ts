@@ -5,9 +5,11 @@ import {
   HttpException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { UserService, verifyToken } from './user.service';
 import { CostObjProps, RecordProps } from 'src/types/record';
+import mongoose from 'mongoose';
 
 @Controller('user')
 export class UserController {
@@ -98,6 +100,16 @@ export class UserController {
       email: 'admin',
     });
     return result;
+  }
+
+  @Put('/bounti/:id')
+  async changeBounti(
+    @Param() param: { id: string },
+    @Body() body: { bounti: boolean },
+  ) {
+    const _id = new mongoose.Types.ObjectId(param.id);
+    const xx = await this.userService.findOneAndUpdate(_id, body);
+    return true;
   }
   // @Get('/kakao/redirect')
   // async kakaoRedirect(@Body() body: any, @Query() query: any) {
