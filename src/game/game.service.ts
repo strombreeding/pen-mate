@@ -112,10 +112,11 @@ export class GameService {
             (list) => list.item.item_name === 'skul',
           );
           const skulCnt = skulInfo == null ? 0 : skulInfo.cnt;
-
+          const skulBouns = 200;
           if (wasPushList) return;
           if (alreadyHasItem) {
-            const bountiBonus = 1200;
+            const imBounti = userInfo.bounti;
+            const bountiBonus = imBounti ? skulCnt * skulBouns : 0;
             const isSkul = updateItem.item_name === 'skul';
             const defaultReward = alreadyHasItem.cnt + updateItem.cnt;
             const updateCnt = isSkul

@@ -238,7 +238,7 @@ export function generateToken(payload: Record<string, any>, expire?: string) {
   // const exp = expire == null ? 10000 : parseTime(expire);
   const newPayload = { ...payload };
   const token = jwt.sign(newPayload, process.env.JWT_SECRET_KEY, {
-    expiresIn: expire == null ? parseTime('1s') : parseTime(expire),
+    expiresIn: expire == null ? parseTime('120s') : parseTime(expire),
     // expiresIn: expire == null ? parseTime('1s') : parseTime(expire),
   });
   return token;

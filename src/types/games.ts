@@ -48,22 +48,7 @@ export const Games: GamesObject = {
         },
       ],
     },
-    {
-      game_url: 'Workshop',
-      title: '작업장',
-      description:
-        '중력! 블록을 잘 쌓으세요\n일정 확률로 아이템을 획득할 수 있습니다.\n일정 확률로 포인트를 획득할 수 있습니다.',
-      matchType: ['정규전'],
-      player: ['1p'],
-      img: 'https://cdn.jsdelivr.net/gh/strombreeding/atata_assets@main/gameImg/tetris_img.png',
-      rewards: [],
-      costObj: [
-        {
-          type: '',
-          cost: 0,
-        },
-      ],
-    },
+
     {
       game_url: 'bang',
       title: '결투!',
